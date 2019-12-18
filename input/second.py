@@ -1,31 +1,38 @@
-# Second traitement
+# second one
 
 
 def manage_input():
     in_fullname = input("Please, give your full name")
     names = validate_display(in_fullname)
+# function that ask and get the input of the user
 
 
 def validate_juststring(input):
-    """"""
-    # vérifie s'il n'est pa svide, s'il y a des espaces
-    # si on a bien une chaine composé de lettres
+    """
+    Verification that the input isn't empty of with
+    character that aren't used in a name. Numbers,etc...
+    this function return an error if something not planned is in this string.
+    """
     if not len(input):
         return False
+
+    # use of Regex to determine that we have a chain of letters and not something else.
     r = re.match("^[A-Za-z]+$", input)
     print(r)
     return True if r else False
 
 
 def validate(fullname):
-    """ validation et affichage d'une string 
-        selon format Prénom <Milieu> Nom 
+    """ 
+    validation et display of the string 
+    format Prénom <Milieu> Nom 
     """
     F_FIRST = "firstname"
     F_LAST = "lastname"
     F_MIDDLE = "middlename"
     F_FULL = "fullname"
     F_ERROR = "error"
+    # We define the entry of the dictionnary
 
     names = fullname.split()
     len_listnames = len(names)
