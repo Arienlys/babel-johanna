@@ -1,5 +1,5 @@
-import second
-from second import validate_display, validate, F_ERROR
+import name
+from name import validate_display, validate, F_ERROR
 
 print("THIRD")
 d = second.validate_display("")
