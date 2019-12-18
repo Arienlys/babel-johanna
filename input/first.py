@@ -1,4 +1,4 @@
-# First traitement
+# First
 
 # We ask the user to enter his name, and then print it to make it appear
 fullname = input("What's your first and last name?")

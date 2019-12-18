@@ -1,9 +1,11 @@
-# second one
+# name
 
 
 def manage_input():
     in_fullname = input("Please, give your full name")
     names = validate_display(in_fullname)
+
+
 # function that ask and get the input of the user
 
 
@@ -39,8 +41,8 @@ def validate(fullname):
     # vérifier sur chaque str de name ne comporte que des lettres de l'alphabet
     type(names)
     for na in names:
-        if not validate_juststring(na)
-        return{F_ERROR: "Erreur de validation sur" + na}
+        if not validate_juststring(na):
+            return {F_ERROR: "Erreur de validation sur" + na}
 
     d = {}
     if len_listnames == 2:
