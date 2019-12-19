@@ -1,0 +1,17 @@
+[
+    {
+        "url": "https://www.midilibre.fr/",
+        "status_code": 200,
+        "title": "Actualit\u00e9s et infos de Montpellier et sa r\u00e9gion - \u00c0 la une - midilibre.fr"
+    },
+    {
+        "url": "https://www.objectifgard.com/",
+        "status_code": 200,
+        "title": "ObjectifGard - Objectif Gard"
+    },
+    {
+        "url": "https://www.20minutes.fr/",
+        "status_code": 200,
+        "title": "20 Minutes, information en continu, actualit\u00e9s, politique, sport\u2026"
+    }
+]
