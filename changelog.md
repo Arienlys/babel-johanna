@@ -30,3 +30,20 @@
 * __call__(self)
 * __add__
 * adding changelog.md
+* package BeautifulSoup4. Coming from pypi.org. 
+    * using pipenv install. Scraping tool > get web content.
+    * DOM (Document, Object, Model) analyze. Organize the html's tag.
+* Debug Mode: script execution, accès denied, flake8 etc...
+* PipEnv > Virtual Environement
+    * Cleaning install > python you can download
+    * repository where you can put your env
+    * put some new files: pipfile and pipfile.lock . Security.
+    * connected to pypi.org
+    * Going to Lib's folder, discovering the sources.
+* package request: HTTP get URL
+    * adding an header to conter security with user.agent.
+* Blake: helping with indentation, lisibility of the code
+
+
+20/12
+=================
