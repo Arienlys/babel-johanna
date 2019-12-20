@@ -14,6 +14,10 @@ dataset = []
 
 
 def get(url):
+    """
+    On va récupérer le header des sites internet via un url. 
+    Avec un user_agent pour passer la sécurité
+    """
     user_agent_text = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36"
     headerdict = {"User-Agent": user_agent_text}
     r = requests.get(url, headers=headerdict)
@@ -22,6 +26,10 @@ def get(url):
 
 
 def get_urls(arglist, is_verbose=False):
+    """
+    Pour chaque url, on gère le cas ou on ne pourrait pas se connecter pour X raison.
+    La dite raison est indiquée.
+    """
     for url_en_arg in arglist:
         try:
             r = get(url_en_arg)
@@ -36,37 +44,110 @@ def get_urls(arglist, is_verbose=False):
             writetodict(r, is_verbose)
 
 
+"""
+Initialisation du premier dictionnaire    
+"""
 F_URL = "url"
 F_STATUS = "status_code"
 # F_HTML = "content"
-F_TITLE = "title"
+# F_TITLE = "title"
 
 
 def writetodict(r, is_verbose=False):
-    dict = {F_URL: r.url, F_STATUS: r.status_code}  # F_HTML: r.text[:1000]
-    title = search_title_by_bs4(r.text)
-    if title:
-        dict[F_TITLE] = title
+    """
+    On rempli les dictionnaire que l'on a créé avec les informations récupéré du header ainsi que leur status lors de la connexion.
+    la fonction update permet de fusionner les deux dictionnaire
+    """
+    dict_html = {F_URL: r.url, F_STATUS: r.status_code}  # F_HTML: r.text[:1000]
+    dict_meta = search_meta(r.text)
+    if dict_meta:
+        dict_html.update(dict_meta)
 
     global dataset
-    dataset.append(dict)
+    dataset.append(dict_html)
 
 
+"""
+Initialisation du second dictionnaire
+"""
+F_DESC = "description"
+F_IMG = "image"
+F_MURL = "murl"
+F_TITLE = "title"
+F_DESC = "description"
+F_IMG = "image"
+F_H1 = "h1"
+F_H2 = "h2"
+
+
+def search_meta(text):
+    """
+    Utilisation de Beautiful Soup pour mettre en forme et récupérer plus facilement ce que l'on désire
+    les différents éléments choisi sont ensuite enregistré dans le dictionnaire qui est retourné.
+    """
+    soup = BeautifulSoup(text, "lxml")
+    dict_meta = dict()
+
+    meta_title = soup.find("meta", property="og:title")
+    if not meta_title:
+        meta_title = soup.title.string
+    else:
+        dict_meta[F_TITLE] = meta_title["content"]
+
+    meta_description = soup.find("meta", property="og:description")
+    dict_meta[F_DESC] = meta_description["content"] if meta_description else ""
+
+    meta_image = soup.find("meta", property="og:image")
+    dict_meta[F_IMG] = meta_image["content"] if meta_image else ""
+
+    d1 = soup.find_all("h1")
+    if d1:
+        dict_meta[F_H1] = []
+        for h1 in d1:
+            dict_meta[F_H1].append(h1.text)
+            print(f"--> h1 : {h1.text}")
+
+    d2 = soup.find_all("h2")
+    if d2:
+        dict_meta[F_H2] = []
+        for h2 in d2:
+            dict_meta[F_H2].append(h2.text)
+            print(f"--> h2 : {h2.text}")
+
+    print("-" * 100)
+    print(type(meta_title))
+    print(meta_title["content"])
+    return dict_meta
+
+    """
+    s = (
+        str(meta_title)
+        .replace('<meta content="', "")
+        .replace('" property="og:title"/>', "")
+    )
+
+    begin = s.find('content="')
+    if begin != -1:
+        end = s.find('"', begin)
+        if end != -1:
+            s = s[begin:end]
+
+    print(meta_title["content"])
+    print(s)
+    print("-" * 100)
+    """
+
+
+"""
 def search_title_by_bs4(text):
+    # code de la veille
     soup = BeautifulSoup(text, "lxml")
     print(soup.title.string)
 
-    # WATCH OUT END OF THE DAY'S CODE
-    d = soup.find_all("h1")
-    for h1 in d:
-        print(f"--> h1 : {h1}")
-    d = soup.find_all("h2")
-    for h2 in d:
-        print(f"--> h2 : {h2}")
-    # You're saved now.
+
 
     return soup.title.string
-
+"""
 
 """
 def search_title(text):
@@ -86,6 +167,9 @@ def search_title(text):
 
 
 def displayurl(r, is_verbose=False):
+    """
+    récupération des valeurs pour les rentrer dans le premier dictionnaire sous forme de clé valeurs. 
+    """
     print(f"->> Il y a {len(r.text)} octets and {r.url}")
     if is_verbose:
         print(r.status_code)
@@ -113,7 +197,7 @@ if __name__ == "__main__":
     dataset = []
     listedesurls = [
         "https://www.midilibre.fr/",
-        "https://www.objectifgard.com/",
+        "https://www.liberation.fr/",
         "https://www.20minutes.fr/",
     ]
 
@@ -132,12 +216,13 @@ if __name__ == "__main__":
     basedir = os.path.dirname(os.path.abspath(__file__))
     print(basedir)
 
+    dataset_api = {"count": len(dataset), "dataset": dataset}
     # Creation du fichier checkurl.json dans le repertoire scrap
     filename = basedir + "/" + "checkurl.json"
-    with open(filename, "w+", encoding="utf8") as f:
-        json.dump(
-            dataset, f
-        )  # prend un objet python et un handle de fichier et écrit dedant
+    with open(filename, "w", encoding="utf8") as f:
+        json.dump(dataset_api, f)
+        print(f"file {filename} created!")
+    # prend un objet python et un handle de fichier et écrit dedant
 
     """
     Ces trois lignes équivalent aux deux lignes du with!!
