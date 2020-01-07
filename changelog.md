@@ -47,3 +47,13 @@
 
 20/12
 =================
+* Django
+    * 2h: initiation.
+    * Creation of the super user & user.
+    * CRUD: Create, Read, Update, Delete
+    * Database
+* Setting.py (config Django)
+* View home who display the json (get from checkurl)
+* urls.py
+* template page home.html
+*  
