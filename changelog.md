@@ -56,4 +56,29 @@
 * View home who display the json (get from checkurl)
 * urls.py
 * template page home.html
-*  
+
+
+7/01
+=================
+* Django Admin
+    * ordering data by name
+    * displaying fields of the table instead of generic name
+    * 
+* Model Database
+    * Definition of ORM, relationship between tables
+    * properties and attributes
+    * functions herited from models.Model
+* Datas
+    * Allowing some of the data to be null/Blank
+    * Hidding some data.
+    * Construction of some column with variable. (reference is build with the author's name and the dewey's number)
+* Installing Pillow for pictures
+* Creation of tables of the database, with column's fields.
+* Architecture
+    * client's needs
+    * 4 personas
+    * Amelioration of the user's experience
+
+
+8/01
+=================
