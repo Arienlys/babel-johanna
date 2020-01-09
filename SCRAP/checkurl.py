@@ -199,6 +199,10 @@ if __name__ == "__main__":
         "https://www.midilibre.fr/",
         "https://www.liberation.fr/",
         "https://www.20minutes.fr/",
+        "https://www.lemonde.fr/",
+        "https://www.bbc.co.uk/news",
+        "https://www.theguardian.com/uk",
+        "http://www.leparisien.fr/",
     ]
 
     get_urls(listedesurls, True)

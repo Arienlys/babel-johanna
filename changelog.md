@@ -82,3 +82,16 @@
 
 8/01
 =================
+* Algo
+    * Century based on the year
+*Database
+    *Modification of the models and catalog
+    *Utilisation of makemigrations and migrate to update
+*Model
+    * Adding the century's algo
+    * Adding the color's code for the dewey classification
+*Form
+    * Brainstorming on the functions which must be added/aren't important
+    * feedback from the "client" leading to some correction
+*Admin
+    * 

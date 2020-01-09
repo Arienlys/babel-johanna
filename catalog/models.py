@@ -1,26 +1,37 @@
 from django.db import models
 from django.utils.html import format_html
+from .utils import get_century
+from django.utils.translation import gettext as _
 
 # Create your models here.
 
 
 class Author(models.Model):
-    first_name = models.CharField(max_length=30, null=True, blank=True)
-    last_name = models.CharField(max_length=30)
+    first_name = models.CharField(
+        max_length=30, null=True, blank=True, verbose_name=_("Prénom")
+    )
+    last_name = models.CharField(max_length=30, verbose_name=_("Nom de famille"))
     name = models.CharField(max_length=61, editable=False)
-
-    century_birth = models.IntegerField(null=True, blank=True, editable=False)
-    date_birth = models.DateField(null=True, blank=True)
-    place_birth = models.CharField(max_length=50, null=True, blank=True)
-    date_died = models.DateField(null=True, blank=True)
-    place_died = models.CharField(max_length=50, null=True, blank=True)
-
-    content = models.TextField(null=True, blank=True)
+    century_birth = models.IntegerField(
+        null=True, blank=True, editable=False, verbose_name=_("Siècle")
+    )
+    date_birth = models.DateField(
+        null=True, blank=True, verbose_name=_("Date de naissance")
+    )
+    place_birth = models.CharField(
+        max_length=50, null=True, blank=True, verbose_name=_("Lieu de naissance")
+    )
+    date_died = models.DateField(null=True, blank=True, verbose_name=_("Date de décès"))
+    place_died = models.CharField(
+        max_length=50, null=True, blank=True, verbose_name=_("Lieu de décès")
+    )
+    content = models.TextField(null=True, blank=True, verbose_name=_("Contenu"))
     image_url = models.URLField(null=True, blank=True)
     image_file = models.ImageField(null=True, blank=True)
 
     class Meta:
         ordering = ["last_name"]
+        verbose_name = _("Auteur")
 
     def __str__(self):
         if self.first_name:
@@ -29,45 +40,63 @@ class Author(models.Model):
             return self.last_name
 
     def clean(self):
+        """
+        1) update century from <date_birth> using catalog.utils.get_century
+        2) update name in <first_name space last_name> or <last_name>
+        """
         if self.date_birth:
-            date = int(self.date_birth.year)
-            if date > 100:
-                century = date % 100
-                if century == 0:
-                    self.century_birth = date // 100
-                else:
-                    self.century_birth = date // 100 + 1
-            else:
-                self.century_birth = 1
+            century = get_century(self.date_birth.year)
+            self.century_birth = century
+
+        if self.first_name:
+            self.name = f"{self.first_name} {self.last_name}"
+        else:
+            self.name = self.last_name
 
 
 class Publication(models.Model):
     TYPE_PUBLICATION_CHOICES = [
         ("_", "Livres"),
-        ("O", "Autres"),
+        ("A", "Autres"),
         ("M", "Musique"),
         ("F", "Films"),
     ]
 
-    dewey_number = models.ForeignKey("Dewey", models.PROTECT, null=True)
+    dewey_number = models.ForeignKey(
+        "Dewey", models.PROTECT, null=True, verbose_name=_("Numéro Dewey")
+    )
     type_publication = models.CharField(
-        max_length=1, choices=TYPE_PUBLICATION_CHOICES, default="_"
+        max_length=1,
+        choices=TYPE_PUBLICATION_CHOICES,
+        default="_",
+        verbose_name=_("Type de publication"),
     )
     isbn = models.CharField(max_length=35)
-    reference = models.CharField(max_length=61, editable=False)
+    reference = models.CharField(
+        max_length=61, editable=False, verbose_name=_("Référence")
+    )
 
-    name = models.CharField(max_length=61)
-    author = models.ForeignKey(Author, models.PROTECT, null=True)
-    label_editor = models.CharField(max_length=50, null=True, blank=True)
-    date_publication = models.DateField(null=True, blank=True)
-    nb_tracks_pages = models.IntegerField(null=True, blank=True)
+    name = models.CharField(max_length=61, verbose_name=_("Titre"))
+    author = models.ForeignKey(
+        Author, models.PROTECT, null=True, verbose_name=_("Auteur")
+    )
+    label_editor = models.CharField(
+        max_length=50, null=True, blank=True, verbose_name=_("Label ou éditeur")
+    )
+    date_publication = models.DateField(
+        null=True, blank=True, verbose_name=_("Date de publication")
+    )
+    nb_tracks_pages = models.IntegerField(
+        null=True, blank=True, verbose_name=_("Nombre de pages/pistes")
+    )
 
-    content = models.TextField(null=True, blank=True)
+    content = models.TextField(null=True, blank=True, verbose_name=_("Contenu"))
     image_url = models.URLField(null=True, blank=True)
     image_book = models.ImageField(null=True, blank=True)
 
     class Meta:
         ordering = ["reference"]
+        verbose_name = _("Publication")
 
     def __str__(self):
         return f"{self.reference} {self.name}"
@@ -82,10 +111,39 @@ class Publication(models.Model):
 
 
 class Dewey(models.Model):
-    name = models.CharField(max_length=61)
-    number = models.CharField(max_length=3)
-    text_color = models.CharField(max_length=7, default="*")
-    bg_color = models.CharField(max_length=7, default="*")
+    DEWEY_COLOR_CHOICES = [
+        ("000", "#000000", "#fff"),  # Black
+        ("100", "#8B4513", "#fff"),  # Maroon
+        ("200", "#FF0000", "#fff"),  # Red
+        ("300", "#FF4500", "#fff"),  # Orange
+        ("400", "#FFFF00", "#000"),  # Yellow
+        ("500", "#32CD32", "#fff"),  # Green
+        ("600", "#1E90FF", "#fff"),  # Ble
+        ("700", "#8B008B", "#fff"),  # Purple
+        ("800", "#A9A9A9", "#fff"),  # Grey
+        ("900", "#FFFFFF", "#000"),  # White
+    ]
+    name = models.CharField(max_length=61, verbose_name=_("Nom"))
+    number = models.CharField(max_length=12, verbose_name=_("Numéro"))
+    text_color = models.CharField(max_length=7, default="*", editable=False)
+    bg_color = models.CharField(max_length=7, default="*", editable=False)
 
     def __str__(self):
-        return f"{self.number}: {self.name}"
+        return f"{self.number} : {self.name}"
+
+    class Meta:
+        ordering = ["number"]
+        verbose_name = _("Numéros Dewey")
+
+    def colored_number(self):
+        if self.number:
+            try:
+                i = int(self.number[:1])
+                return format_html(
+                    '<span style="background-color: {}; color:{}; min-width:50px; padding:3px"> {} </span>',
+                    self.DEWEY_COLOR_CHOICES[i][1],
+                    self.DEWEY_COLOR_CHOICES[i][2],
+                    self.number,
+                )
+            except:
+                return "Wrong format"

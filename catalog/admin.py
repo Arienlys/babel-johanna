@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Author, Publication, Dewey
+from django.utils.translation import gettext as _
 
 
 class PublicationAdmin(admin.ModelAdmin):
@@ -23,13 +24,15 @@ class PublicationAdmin(admin.ModelAdmin):
         "image_url",
     )
 
+    autocomplete_fields = ("dewey_number", "author")
     readonly_fields = ("reference",)
     radio_fields = {"type_publication": admin.HORIZONTAL}
+    list_filter = ("dewey_number__number", "author__name")
 
     fieldsets = (
-        ("reference", {"fields": list_reference}),
-        ("Publication", {"fields": list_publication}),
-        ("Details", {"fields": list_details}),
+        (_("Référence"), {"fields": list_reference}),
+        (_("Publication"), {"fields": list_publication}),
+        (_("Details"), {"fields": list_details}),
     )
 
 
@@ -54,17 +57,32 @@ class AuthorAdmin(admin.ModelAdmin):
         "image_url",
     )
 
+    search_fields = (
+        "last_name",
+        "first_name",
+    )
     readonly_fields = ("century_birth",)
+    list_filter = ("century_birth",)
+    search_filters = (
+        "first_name",
+        "last_name",
+    )
 
     fieldsets = (
-        ("Presentation", {"fields": list_presentation}),
-        ("Informations", {"fields": list_birthplace}),
-        ("Details", {"fields": list_details}),
+        (_("Présentation"), {"fields": list_presentation}),
+        (_("Informations"), {"fields": list_birthplace}),
+        (_("Détails"), {"fields": list_details}),
     )
 
 
 class DeweyAdmin(admin.ModelAdmin):
-    list_display: ("name", "number")
+    list_display = (
+        "number",
+        "name",
+        "colored_number",
+    )
+
+    search_fields = ("number", "name")
 
 
 admin.site.register(Author, AuthorAdmin)
