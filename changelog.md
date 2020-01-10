@@ -93,5 +93,22 @@
 *Form
     * Brainstorming on the functions which must be added/aren't important
     * feedback from the "client" leading to some correction
-*Admin
-    * 
+
+9/01
+=================
+* Algo
+    * get data based on an url
+        * Title
+        * Metadescription
+        * picture
+        *url
+* Django HTML: creation of a composant html to read the data from the previous algorythm
+* Django settings
+    * Adding Media: file upload, downloading pictures
+    * static : CSS, JS, font, jpg
+        * getting all the static's ressources for the application
+        * public access
+* Integration of filters, searching mode and autocompletion function for the administration
+* Upgrade of the user's interface
+* Translation of the wording (english => user's langage)
+* Adding the color system to the dewey's system. Each entry got his color.
