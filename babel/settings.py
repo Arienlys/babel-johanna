@@ -11,21 +11,37 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from distutils.util import strtobool
+from dotenv import load_dotenv
+import django_heroku
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-print(f"BASE_DIR = {BASE_DIR}")
+
+dotenv_path = BASE_DIR + "/.env"
+load_dotenv(dotenv_path=dotenv_path)
+
+print(f"BASE_DIR = {BASE_DIR}, {dotenv_path}")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "&t%0czpxhh3bo%@dagrm@p*s#7vvp!7)8ng+59on6ok4a@jb#+"
+SECRET_KEY = os.getenv("SECRET_KEY")
+# "&t%0czpxhh3bo%@dagrm@p*s#7vvp!7)8ng+59on6ok4a@jb#+"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = strtobool(os.getenv("DEBUG_DJANGO", "0"))
 
-ALLOWED_HOSTS = []
+if DEBUG:
+    print("MODE DEBUG!!!")
+
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "babel-johanna.herokuapp.com",
+    "localhost",
+]
 
 
 # Application definition
@@ -73,13 +89,20 @@ WSGI_APPLICATION = "babel.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+USE_LOCAL_DB = strtobool(os.getenv("USE_LOCAL_DB", "0"))
+if USE_LOCAL_DB:
+    print("UTILISE LE MODE LOCAL DB: SQLLITE")
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": dj_database_url.config(),
+    }
+    DATABASES["default"] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 
 # Password validation
@@ -117,10 +140,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "files_static")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "files_media")
 
 print(f"STATIC = {STATIC_ROOT}")
 print(f"STATIC = {MEDIA_ROOT}")
+
+if not USE_LOCAL_DB:
+    # Activate Django-Heroku
+    django_heroku.settings(locals())
