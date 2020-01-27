@@ -1,0 +1,36 @@
+{% extends 'catalog/publication-detail.html' %}
+{% load crispy_forms_tags %}
+
+{%block jumbotron %}
+{%endblock%}
+
+{% block content %}
+{%block contentactions%}
+<nav class="navbar sticky-top dewey{{object.dewey_number.number}}">
+    <div class="container">
+        <div>
+            <a class="btn btn-sm btn-light" href="{% url 'publication-dewey' object.dewey_number.number %}">
+                < Retour </a> <a class="btn btn-sm btn-success" id="save-maj">Enregistrer les modifications
+            </a>
+        </div>
+    </div>
+</nav>
+{%endblock%}
+
+<div class="container">
+    <h1>{{ object }}</h1>
+    <form method="post" id="form-maj">
+        {% csrf_token %}
+        {{form|crispy}}
+    </form>
+</div>
+{% endblock %}
+
+{% block userscript %}
+{{ block.super }}
+<script>
+    window.onload = function () {
+        document.getElementById("save-maj").addEventListener("click", function () { document.getElementById('form-maj').submit(); return false; });
+    }
+</script>
+{% endblock %}

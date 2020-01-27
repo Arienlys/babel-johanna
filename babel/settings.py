@@ -45,7 +45,7 @@ ALLOWED_HOSTS = [
 
 
 # Application definition
-
+# toujours mettre nos applications à la fin
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -53,8 +53,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "catalog",
     "import_export",
+    "crispy_forms",
+    "catalog",
 ]
 
 MIDDLEWARE = [
@@ -86,7 +87,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "babel.wsgi.application"
-
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

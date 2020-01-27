@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.html import format_html
 from .utils import get_century
 from django.utils.translation import gettext as _
+from django.urls import reverse
 
 # Create your models here.
 
@@ -26,7 +27,7 @@ class Author(models.Model):
         max_length=50, null=True, blank=True, verbose_name=_("Lieu de décès")
     )
     content = models.TextField(null=True, blank=True, verbose_name=_("Contenu"))
-    image_url = models.URLField(null=True, blank=True)
+    image_url = models.URLField(null=True, blank=True, max_length=300)
     image_file = models.ImageField(null=True, blank=True)
 
     class Meta:
@@ -108,6 +109,9 @@ class Publication(models.Model):
             )
         else:
             self.reference = f"ENATTENTE.{self.pk}"
+
+    def get_absolute_url(self):
+        return reverse("publication-detail-pk", args=[str(self.id)])
 
 
 class Dewey(models.Model):

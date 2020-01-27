@@ -3,6 +3,12 @@
 {% block content %}
 
 CECI EST PUBLICATION
-{% include 'catalog/dewey-list.html'%}
-{% include 'catalog/publication-list.html'%}
+<div class="contain d-flex" style="justify-content: space-around;">
+    <div style="width:30%">
+        {% include 'catalog/dewey-list.html'%}
+    </div>
+    <div style="width:65%">
+        {% include 'catalog/publication-list.html'%}
+    </div>
+</div>
 {% endblock %}

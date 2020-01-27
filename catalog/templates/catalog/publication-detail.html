@@ -1,21 +1,36 @@
 {% extends 'catalog/base.html' %}
 
 {% block content %}
+{%block jumbotron %}
+{%endblock%}
+{%block contentactions%}
+<nav class="navbar sticky-top dewey{{object.dewey_number.number}}">
+    <a href="{% url 'publication-dewey' object.dewey_number.number %}">
+        {{object.dewey_number.number}} - {{object.dewey_number.name}} </a>
+    <a href="">edit</a>
+</nav> {%endblock%} <div class="container">
+    <h1>{{ object }}</h1>
 
-<h1>{{ object }}</h1>
+    <ul>
+        <li>{{object.name}}</li>*
+        <li>{{object.type_publication}}</li>
+        <li>{{object.date_publication}}</li>
+        <li>author
+            <ul>
+                <li>{{object.author}}</li>
+                <li>{{object.author.century_birth}}</li>
+                <li>{{object.author.date_birth}}</li>
+            </ul>
+        </li>
+        <li> Contenu : <br> {{object.content}} </li>
+        {%if object.image_file %}
+        <li>Nombre de pistes/pages: <br> {{object.image_file}} </li>
+        {%endif%}
+        {%if object.image.url %}
+        <li><img src="{{object.image_url}}" class="img-fluid" alt="Image associée à {{object.name}}"> </li>
+        {%endif%}
+        <li>{{object.dewey_number.colored_number}}</li>
 
-<ul>
-    <li>{{object.name}}</li>*
-    <li>{{object.type_publication}}</li>
-    <li>{{object.date_publication}}</li>
-    <li>author
-        <ul>
-            <li>{{object.author}}</li>
-            <li>{{object.author.century_birth}}</li>
-            <li>{{object.author.date_birth}}</li>
-        </ul>
-    </li>
-    <li><a href="{% url 'publication-dewey' object.dewey_number.number %}">{{object.dewey_number}}</a></li>
-    <li>{{object.dewey_number.colored_number}}</li>
-</ul>
+    </ul>
+</div>
 {% endblock %}

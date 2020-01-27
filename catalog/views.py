@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.conf import settings
+from django.db.models import Q
 import json
 
 from .models import Dewey, Publication
@@ -15,19 +16,32 @@ CONTEXT_GLOBAL = {
 
 
 def publication(request):
-    record = Dewey.objects.get(number="100")
-    record_list = Dewey.objects.all()
+    record_list = Dewey.objects.filter(
+        Q(number="000")
+        | Q(number="100")
+        | Q(number="200")
+        | Q(number="300")
+        | Q(number="400")
+        | Q(number="500")
+        | Q(number="600")
+        | Q(number="700")
+        | Q(number="800")
+        | Q(number="900")
+    )
 
     publication_list = Publication.objects.all()
 
-    context_local = {
-        "title": "Liste des publications du catalogue",
-        "description": "vous trouverez tous les ouvrages et leurs classifications",
+    context = {
+        "local": {
+            "title": "Liste des publications du catalogue",
+            "description": "vous trouverez tous les ouvrages et leurs classifications",
+            "publication": "active",
+        }
     }
+
     context_page = {
         "global": CONTEXT_GLOBAL,
-        "local": context_local,
-        "dewey_object": record,
+        **context,
         "dewey_object_list": record_list,
         "publication_object_list": publication_list,
     }
@@ -35,21 +49,39 @@ def publication(request):
 
 
 def home(request):
-    context_local = {
-        "title": "Page d'accueil de Babel",
-        "description": "Bienvenue sur cette page en cours de réalisation",
+    basedir = settings.BASE_DIR
+    filename = basedir + "/catalog/static/catalog/markdown/home.md"
+    try:
+        with open(filename, "r") as f:
+            jumbotrontext = f.read()
+    except Exception as e:
+        jumbotrontext = "error" + str(e)
+
+    context = {
+        "local": {
+            "title": "Page d'accueil de Babel",
+            "description": jumbotrontext,
+            "home": "active",
+        }
     }
-    context_page = {"global": CONTEXT_GLOBAL, "local": context_local}
+
+    context_page = {"global": CONTEXT_GLOBAL, **context}
     return render(request, "catalog/index.html", context=context_page)
 
 
 def about(request):
-    context_local = {
-        "title": "A propos de Babel",
-        "description": "Vous trouverez tous les détails de la spécification ici.",
+    context = {
+        "local": {
+            "title": "A propos de Babel",
+            "description": "Vous trouverez tous les détails de la spécification ici.",
+            "about": "active",
+        },
     }
 
-    context_page = {"global": CONTEXT_GLOBAL, "local": context_local}
+    context_page = {
+        "global": CONTEXT_GLOBAL,
+        **context,
+    }
     return render(request, "catalog/about.html", context=context_page)
 
 
@@ -63,15 +95,18 @@ def newsroom(request):
     except Exception as e:
         dict_checkurl = {"error": str(e)}
 
-    context_local = {
-        "title": "Salle de Presse",
-        "description": "Découvrez une liste de quotidien régionaux",
+    context = {
+        "local": {
+            "title": "Salle de Presse",
+            "description": "Découvrez une liste de quotidien régionaux",
+            "newsroom": "active",
+        }
     }
 
     # Pour ajouter un dictionnaire à un dictionnaire, j'utilise bigdict = { **onedict, **anotherone, ...}
     context_page = {
         "checkurl": dict_checkurl,
-        "local": context_local,
+        **context,
         "global": CONTEXT_GLOBAL,
     }
     return render(request, "catalog/newsroom.html", context=context_page)

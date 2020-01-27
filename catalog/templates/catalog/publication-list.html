@@ -1,29 +1,40 @@
 {% comment %} {% for publication_record in publication_object_list %} {{ publication_record }} <br>
 {% endfor %}{% endcomment %}
-<div class="publication-list">
-    {% if publiction_count %}
-    <h2>Liste des publications : </h2>
 
-    {%endif%}
-    <h2>Liste des publications : </h2>
-    <table class="table table-sm table-responsive">
+<div class="publication-list">
+    {% if publication_object_list %}
+
+    <table class="table table-responsive">
         <thead>
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Publication</th>
+                {% if publication_count %}
+                <th colspan="2">{{publication_count}} publication(s) :</th>
+                {%else%}
+                <th colspan="2">Liste des ouvrages:</th>
+                {%endif%}
                 <th scope="col">Auteur</th>
                 <th scope="col">Type</th>
                 <th scope="col">Editeur/Label</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody> {% for publication_record in publication_object_list %} <tr>
-                <td>{{ publication_record.reference }}</td>
+                <!-- <td>{{ publication_record.reference }}</td> -->
+                <td><a href="{{publication_record.get_absolute_url}}"> {{ publication_record.reference }}</a></td>
                 <td>{{ publication_record.name }}</td>
                 <td>{{ publication_record.author }}</td>
                 <td>{{ publication_record.type_publication }}</td>
                 <td>{{ publication_record.label_editor }}</td>
+                <td><a href="{% url 'publication-update-pk' publication_record.pk %}">
+                        edit</a></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    {% else %}
+    <h2>Pas de publication!</h2>
+    {%endif%}
+
+
 </div>
