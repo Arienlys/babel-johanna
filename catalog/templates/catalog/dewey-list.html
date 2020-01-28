@@ -12,7 +12,6 @@
 {% load i18n %}
 
 <div class="dewey-list">
-    <h2>{% trans "Filtrer par Dewey:"%}</h2>
     <div class="list-group dewey-list-group">
         {% for dewey_record in dewey_object_list %}
         <a href="{% url 'publication-dewey' dewey_record.number %}" type="button"

@@ -1,14 +1,61 @@
 {% extends 'catalog/base.html' %}
 
 {% block content %}
-
-CECI EST PUBLICATION
 <div class="contain d-flex" style="justify-content: space-around;">
-    <div style="width:30%">
-        {% include 'catalog/dewey-list.html'%}
+    <div id="accordion" style="width:30%">
+        <div class="card">
+            <div class="card-header menu" id="panelDewey">
+                <h5 class="mb-0">
+                    <button class="btn btn-link d-block d-sm-none" data-toggle="collapse" data-target="#ListDewey"
+                        aria-expanded="true" aria-controls="collapseOne">
+                        <h5>Filtrer par:</h5>
+                    </button>
+                    <h4 class="d-none d-sm-block">Filtrer par liste Dewey </h4>
+                </h5>
+            </div>
+
+            <div id="ListDewey" class="collapse show menu" aria-labelledby="panelDewey" data-parent="#accordion">
+                {% include 'catalog/dewey-list.html'%}
+            </div>
+        </div>
     </div>
-    <div style="width:65%">
+
+    <div id="menu">
+        <div class="card">
+            <div class="card-header menu" id="panelDewey">
+                <h5 class="mb-0">
+                    <h4 class="d-none d-sm-block">Filtrer par liste Dewey </h4>
+                </h5>
+            </div>
+
+            <div id="ListDewey" class="collapse show menu" aria-labelledby="panelDewey" data-parent="#accordion">
+                {% include 'catalog/dewey-list.html'%}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel" style="width:65%" id="panel">
         {% include 'catalog/publication-list.html'%}
     </div>
 </div>
+
+
+{% endblock %}
+
+{% block userscript %}
+{{block.super}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/1.0.1/slideout.min.js"></script>
+<script>
+    var slideout = new Slideout({
+        'panel': document.getElementById('panel'),
+        'menu': document.getElementById('menu'),
+        'padding': 256,
+        'tolerance': 70
+    });
+
+    // Toggle button
+    document.querySelector('.toggle-button').addEventListener('click', function () {
+        slideout.toggle();
+    });
+</script>
 {% endblock %}
